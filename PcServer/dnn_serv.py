@@ -10,6 +10,8 @@ sys.path.append("../")
 from Util.util import readjson, bytes2img
 
 def dnn_server_udp(sock: socket.socket):
+    max_fps = -1
+    min_fps = 999
     while True:
         begin_time = time.time()
 
@@ -19,8 +21,19 @@ def dnn_server_udp(sock: socket.socket):
 
         img = bytes2img(data)
         end_time = time.time()
-        cv2.putText(img, '%.2f fps'%(1.0/(end_time-begin_time)), 
+        fps = 1.0/(end_time-begin_time)
+        cv2.putText(img, '%.2f fps'%(fps), 
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255))
+        if fps > max_fps:
+            max_fps = fps
+        if fps < min_fps:
+            min_fps = fps
+        cv2.putText(img, 'max : %.2f'%(max_fps), 
+                    (200, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255, 0))
+        cv2.putText(img, 'min : %.2f'%(min_fps), 
+                    (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255, 0))
+
+
         cv2.imshow(f"ya{sock.getsockname()}", img)
         cv2.waitKey(1)
 
