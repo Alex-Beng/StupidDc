@@ -19,12 +19,12 @@ def sendonce(cofig_file, cfg_cd='utf-8'):
     _, enc_img = cv2.imencode(".jpg", img)
     enc_arr = np.array(enc_img)
     enc_bytes = enc_arr.tobytes()
-    s.send(enc_bytes)
+    print(len(enc_bytes))
+
+    t = s.send(enc_bytes)
+    s.close()
 
     s.close()
 if __name__ == "__main__":
-    for i in range(5):
-        sendonce("../config/pc_serv.json")
-        time.sleep(1)
-    
+    sendonce("../config/pc_serv.json")    
     
