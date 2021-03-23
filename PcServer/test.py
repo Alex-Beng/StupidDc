@@ -7,24 +7,30 @@ import numpy as np
 
 import sys
 sys.path.append("../")
-from Util.util import readjson
+from Util.util import readjson, img2bytes
+
+window_name = 'ctmd'
 
 def sendonce(cofig_file, cfg_cd='utf-8'):
     config = readjson(cofig_file, cfg_cd)
-    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
-    s.connect((config['addr'], config['port']))
+    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
-    img = cv2.imread("./test.jpg")
+    cp = cv2.VideoCapture(0)
+    while True:
+        begin_time = time.time()
+        _, frame = cp.read()
+        end_time = time.time()
+        if not _:
+            print("opening...")
+            continue
+        
+        enc_frame = img2bytes(frame)
+        print(f'encoded frame len: {len(enc_frame)}', 
+              'raw fps: %.2f'%(1.0/(end_time-begin_time)))
+        s.sendto(enc_frame, (config['addr'], config['port']))
 
-    _, enc_img = cv2.imencode(".jpg", img)
-    enc_arr = np.array(enc_img)
-    enc_bytes = enc_arr.tobytes()
-    print(len(enc_bytes))
-
-    t = s.send(enc_bytes)
     s.close()
 
-    s.close()
 if __name__ == "__main__":
     sendonce("../config/pc_serv.json")    
     
