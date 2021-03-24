@@ -40,7 +40,7 @@ def dnn_server_udp(sock: socket.socket):
                     (200, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255, 0))
 
 
-        cv2.imshow(f"{sock.getpeername()}", img)
+        cv2.imshow(f"{str(addr)}", img)
         cv2.waitKey(1)
 
         
