@@ -20,6 +20,8 @@ def sendonce(cofig_file, cfg_cd='utf-8'):
         begin_time = time.time()
         _, frame = cp.read()
         end_time = time.time()
+
+        frame = cv2.resize(frame, (320, 240))
         if not _:
             print("opening...")
             continue
