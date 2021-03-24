@@ -12,7 +12,9 @@ from Util.util import readjson, bytes2img
 def dnn_server_udp(sock: socket.socket):
     max_fps = -1
     min_fps = 999
+    cnt = 0
     while True:
+        cnt += 1
         begin_time = time.time()
 
         data, addr = sock.recvfrom(1024000)
@@ -24,6 +26,10 @@ def dnn_server_udp(sock: socket.socket):
         fps = 1.0/(end_time-begin_time)
         cv2.putText(img, '%.2f fps'%(fps), 
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255))
+        if cnt > 100:
+            cnt = 0
+            max_fps = -1
+            min_fps = 999
         if fps > max_fps:
             max_fps = fps
         if fps < min_fps:
