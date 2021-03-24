@@ -65,7 +65,7 @@ def main(cofig_file, font_cd='utf-8', cfg_cd='utf-8') -> int:
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # in case CTRLC
 
-    s.bind((config['addr'], config['port']))
+    s.bind(('0.0.0.0', config['port']))
     dnn_server_udp(s)
 
 
