@@ -8,6 +8,8 @@ import sys
 sys.path.append("../")
 from Util.util import readjson
 
+def send_serial():
+    pass
 
 def serial_server(sock: socket.socket):
     data = b''
@@ -18,13 +20,11 @@ def serial_server(sock: socket.socket):
     if not data:
         sock.close()
         return
-    img = np.asarray(bytearray(data), dtype="uint8")
-    img = cv2.imdecode(img, cv2.IMREAD_COLOR)
-    cv2.imshow(f"ya{sock.getsockname()}", img)
-    cv2.waitKey()
-    cv2.destroyAllWindows()
-    res = ""
-    sock.send(bytes(res, encoding='utf-8'))
+    if data == b'yes':
+        print("get the stupid signal")
+        send_serial()
+    else:
+        sock.close()
 
 
 def main(cofig_file, font_cd='utf-8', cfg_cd='utf-8') -> int:
@@ -37,7 +37,7 @@ def main(cofig_file, font_cd='utf-8', cfg_cd='utf-8') -> int:
     s.listen(socket.SOMAXCONN)
     while True:
         sock, addr = s.accept()
-        t = threading.Thread(target=dnn_server, args=[sock])
+        t = threading.Thread(target=serial_server, args=[sock])
         t.start()
 
 if __name__ == "__main__":
