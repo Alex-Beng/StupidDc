@@ -9,6 +9,17 @@ import sys
 sys.path.append("../")
 from Util.util import readjson, bytes2img
 
+def dnn_server_udp_once(config):
+    s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    s.bind((config['addr'], config['port']))
+    data, addr = sock.recvfrom(1024000)
+
+    print(f'receive: {len(data)} from {addr}')
+
+    img = bytes2img(data)
+    s.close()
+    return img
+
 def dnn_server_udp(sock: socket.socket):
     max_fps = -1
     min_fps = 999
