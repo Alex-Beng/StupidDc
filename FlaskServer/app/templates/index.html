@@ -6,5 +6,11 @@
     <p>Stupid meaning "stupidity, a lack of intelligence".</p>
     <p>Dc(大创) meaning "innovation project of undergraduate".</p>
     <B>a lack-of-intelligence innovation project of undergraduate</B>
+    <h1>猜你想穿</h1>
+    <ul id="container">
+        {% for image in images %}
+        <img class="item" src="{{ url_for('images', filename=image) }}" width="304" height="228" />
+        {% endfor %}
+    </ul>
 
 {% endblock %}
