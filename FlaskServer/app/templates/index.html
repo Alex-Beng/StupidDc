@@ -12,6 +12,9 @@
         <img class="item" src="{{ url_for('images', filename=image) }}" width="304" height="228" />
         <p>{{ image.split('@')[0] }}</p>
         {% endfor %}
+        {% if not images%}
+        <p>来到了一个没有衣服的空衣柜...导航栏点击Add添加8</p>
+        {% endif %}
     </ul>
 
 {% endblock %}

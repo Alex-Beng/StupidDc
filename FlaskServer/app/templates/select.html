@@ -1,5 +1,15 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+    {{ wtf.quick_form(form) }}
+
+    <h1>Select Clothes</h1>
+    <ul id="container">
+        {% for image in images %}
+        <img class="item" src="{{ url_for('images', filename=image) }}" width="304" height="228" />
+        <p>{{ image.split('@')[0] }}</p>
+        {% endfor %}
+    </ul>
 
 {% endblock %}

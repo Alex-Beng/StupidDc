@@ -3,6 +3,7 @@ import json
 import threading
 import cv2
 import numpy as np
+import os
 
 
 def readjson(file_path, cd):
@@ -21,3 +22,12 @@ def bytes2img(data):
     img = np.asarray(bytearray(data), dtype="uint8")
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
     return img
+
+def get_imgs_name(root_path):
+    imgs = []
+    img_path = root_path
+    pather = os.walk(img_path)
+    for path,dir_list,file_list in pather:
+        for file_name in file_list:
+            imgs.append(file_name)
+    return imgs

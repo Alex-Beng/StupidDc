@@ -10,3 +10,11 @@ class AddClothesForm(FlaskForm):
         FileRequired(u'你还没有选择图片！'),
         FileAllowed(['jpg', 'png', 'jpeg'], u'只能上传图片！')])
     submit = SubmitField(u'提交')
+
+class SelectForm(FlaskForm):
+    name = StringField(u'请输入想穿的衣服')
+    submit = SubmitField(u'提交')
+
+class DeleteForm(FlaskForm):
+    name = StringField(u'请输入想删除的衣服')
+    submit = SubmitField(u'提交')

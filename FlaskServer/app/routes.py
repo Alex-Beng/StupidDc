@@ -1,23 +1,26 @@
 from flask import render_template, flash, redirect, url_for, request, send_from_directory, abort
 from app import app, photos
-from app.forms import AddClothesForm
+from app.forms import AddClothesForm, SelectForm, DeleteForm
 
 import time
 import os
 import random
 
+import sys
+sys.path.append("../")
+from Util.util import get_imgs_name
+
+
+def selecting():
+    time.sleep(10)
+
+def deleteing():
+    time.sleep(10)
 
 @app.route('/')
 @app.route('/index')
 def index():
-    imgs = []
-    img_path = app.config['UPLOADED_PHOTOS_DEST']
-    pather = os.walk(img_path)
-    for path,dir_list,file_list in pather:
-        for file_name in file_list:
-            # os.path.join(path, file_name)
-            # # print(os.path.join(path, file_name) )
-            imgs.append(file_name)
+    imgs = get_imgs_name(app.config['UPLOADED_PHOTOS_DEST'])
     if len(imgs) > 2:
         imgs = [random.choice(imgs) for i in range(2)]
     return render_template('index.html', title='Home', images=imgs)
@@ -26,9 +29,26 @@ def index():
 def images(filename):
     return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
 
-@app.route('/select')
+@app.route('/select', methods=['GET', 'POST'])
 def select():
-    return render_template('select.html', title='Home')
+    form = SelectForm()
+    imgs = get_imgs_name(app.config['UPLOADED_PHOTOS_DEST'])
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            short_name = form.name.data
+            full_name = ''
+            for f_name in imgs:
+                if f_name.split('@')[0] == short_name:
+                    full_name = f_name
+            print(full_name)
+            
+            selecting()
+            
+            flash(f"you have fucking select the {short_name}.")
+        return redirect('select')
+    else:
+        return render_template('select.html', title='Select', form=form, images=imgs)
 
 @app.route('/add', methods=['GET', 'POST'])
 def add():
@@ -45,9 +65,27 @@ def add():
             flash("you have fucking add a clothes.")
         return redirect('add')
     else:
-        return render_template('add.html', title='Home', form=form)
+        return render_template('add.html', title='Add', form=form)
     
 
-@app.route('/delete')
+@app.route('/delete', methods=['GET', 'POST'])
 def delete():
-    return render_template('delete.html', title='Home')
+    form = DeleteForm()
+    imgs = get_imgs_name(app.config['UPLOADED_PHOTOS_DEST'])
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            short_name = form.name.data
+            full_name = ''
+            for f_name in imgs:
+                if f_name.split('@')[0] == short_name:
+                    full_name = f_name
+            f_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], full_name)
+            ret = os.system(f"rm {f_path}")
+            if ret:
+                flash("Something gone worry...Havn't deleted...")
+            else:
+                flash(f"you have fucking delete the {short_name}.")
+        return redirect('delete')
+    else:
+        return render_template('delete.html', title='Delete', form=form, images=imgs)
