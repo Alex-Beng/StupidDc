@@ -9,8 +9,7 @@ import sys
 sys.path.append("../")
 from Util.util import readjson
 
-def sendonce(cofig_file, cfg_cd='utf-8'):
-    config = readjson(cofig_file, cfg_cd)
+def sendonce(config):
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)
     s.connect((config['addr'], config['port']))
 

@@ -1,18 +1,66 @@
 from flask import render_template, flash, redirect, url_for, request, send_from_directory, abort
-from app import app, photos
+from app import app, photos, feat_extractor
 from app.forms import AddClothesForm, SelectForm, DeleteForm
 
 import time
 import os
 import random
+import cv2
+from scipy.spatial import distance
 
 import sys
 sys.path.append("../")
 from Util.util import get_imgs_name
+from PcServer.dnn_serv import dnn_server_udp_once
+from Piserver.test import sendonce
 
+def get_local_img_features():
+    b_t = time.time()
+
+    imgs = get_imgs_name(app.config['UPLOADED_PHOTOS_DEST'])
+    fets = []
+    for img_name in imgs:
+        full_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], img_name)
+        img = cv2.imread(full_path)
+        img = cv2.resize(img, (224, 224))
+
+        feature = feat_extractor.feat_extractor.predict(img.reshape(-1, 224, 224, 3))[0]
+        fets.append(feature)
+    
+    e_t = time.time()
+    print(f"local img feature take {e_t-b_t}")
+    return fets
 
 def selecting(full_name):
-    time.sleep(10)
+    # steps
+    # 1. get real-time frame with udp from pi
+    # 2. comp cos distance between frame and the pic existed
+    #        if distance < threshold: 
+    #            give signal to pi
+    local_features = get_local_img_features()
+    dnn_config = dict()
+    dnn_config['addr'] = '0.0.0.0'
+    dnn_config['port'] = app.config['PC_SERVER_PORT']
+    serial_config = dict()
+    serial_config['addr'] = app.config['SERIAL_SERVER_ADDR']
+    serial_config['port'] = app.config['SERIAL_SERVER_PORT']
+    while True:
+        img = dnn_server_udp_once(dnn_config)
+        img = cv2.resize(img, (224, 224))
+        
+        # feature shape is (4096, )
+        feature = feat_extractor.feat_extractor.predict(img.reshape(-1, 224, 224, 3))[0]
+
+        cos_dists = [ distance.cosine(feature, l_f) for l_f in local_features]
+        cloest_idx = min(range(len(cos_dists)), key = lambda k: cos_dists[k])
+        if cos_dists[cloest_idx] < app.config['DNN_THRESHOLD']:
+            sendonce(serial_config)
+            return
+    #     cv2.imshow("ya", img)
+    #     key = cv2.waitKey(1)
+    #     if key == ord('q'):
+    #         break
+    # cv2.destroyAllWindows()
 
 
 @app.route('/')
@@ -44,7 +92,7 @@ def select():
                     full_name = f_name
             print(full_name)
             
-            selecting()
+            selecting(full_name)
             
             flash(f"you have fucking select the {short_name}.")
         return redirect('select')
