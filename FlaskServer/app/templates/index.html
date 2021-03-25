@@ -10,6 +10,7 @@
     <ul id="container">
         {% for image in images %}
         <img class="item" src="{{ url_for('images', filename=image) }}" width="304" height="228" />
+        <p>{{ image.split('@')[0] }}</p>
         {% endfor %}
     </ul>
 
