@@ -11,11 +11,9 @@ sys.path.append("../")
 from Util.util import get_imgs_name
 
 
-def selecting():
+def selecting(full_name):
     time.sleep(10)
 
-def deleteing():
-    time.sleep(10)
 
 @app.route('/')
 @app.route('/index')
@@ -28,6 +26,9 @@ def index():
 @app.route('/images/<filename>')
 def images(filename):
     return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'], filename)
+@app.route('/favicon.ico')
+def ico():
+    return send_from_directory(app.config['ICO_PAHT'], 'favicon.ico')
 
 @app.route('/select', methods=['GET', 'POST'])
 def select():
