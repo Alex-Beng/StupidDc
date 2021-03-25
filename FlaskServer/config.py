@@ -14,4 +14,5 @@ class Config(object):
     SERIAL_SERVER_ADDR = '10.70.154.76'
     SERIAL_SERVER_PORT = 8844
     
-    DNN_THRESHOLD = 12345
+    # cos 距离取值为[0, 2]
+    DNN_THRESHOLD = 0.7
