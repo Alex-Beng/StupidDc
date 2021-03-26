@@ -11,7 +11,7 @@ from Util.util import readjson, bytes2img
 
 def dnn_server_udp_once(config):
     s = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-    s.bind((config['addr'], config['port']))
+    s.bind(('0.0.0.0', config['port']))
     data, addr = s.recvfrom(1024000)
 
     print(f'receive: {len(data)} from {addr}')

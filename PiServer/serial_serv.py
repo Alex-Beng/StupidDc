@@ -3,13 +3,19 @@ import json
 import threading
 import cv2
 import numpy as np
+import serial
 
 import sys
 sys.path.append("../")
 from Util.util import readjson
 
 def send_serial():
-    pass
+    # ser = serial.Serial("/dev/ttyAMA0",115200)
+    ser = serial.Serial("/dev/ttyUSB0",115200)
+    hex_str = bytes.fromhex('ff ff 00 00 0d 0a')
+    ser.write(hex_str)
+    ser.close()
+
 
 def serial_server(sock: socket.socket):
     data = b''

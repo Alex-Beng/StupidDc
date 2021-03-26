@@ -8,10 +8,10 @@ class Config(object):
     UPLOADED_PHOTOS_DEST = os.environ.get('UPLOADED_PHOTOS_DEST') or 'D:/Alex_Beng/code/python/StupidDc/FlaskServer/app/images/'
     ICO_PAHT = os.environ.get('ICO_PAHT') or 'D:/Alex_Beng/code/python/StupidDc/FlaskServer/app/'
 
-    PC_SERVER_ADDR = '10.27.29.120'
+    PC_SERVER_ADDR = '172.20.10.6'
     PC_SERVER_PORT = 8848
 
-    SERIAL_SERVER_ADDR = '10.70.154.76'
+    SERIAL_SERVER_ADDR = '172.20.10.6'
     SERIAL_SERVER_PORT = 8844
     
     # cos 距离取值为[0, 2]

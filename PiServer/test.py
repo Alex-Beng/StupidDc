@@ -17,5 +17,6 @@ def sendonce(config):
 
     s.close()
 if __name__ == "__main__":
-    sendonce("../config/serial_serv.json")    
+    cfg = readjson("../config/serial_serv.json", 'utf-8')
+    sendonce(cfg)
     

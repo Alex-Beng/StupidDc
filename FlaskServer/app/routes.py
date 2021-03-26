@@ -14,6 +14,7 @@ from Util.util import get_imgs_name
 from PcServer.dnn_serv import dnn_server_udp_once
 from Piserver.test import sendonce
 
+
 def get_local_img_features():
     b_t = time.time()
 
