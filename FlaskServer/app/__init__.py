@@ -17,6 +17,8 @@ from keras.models import Model
 model = keras.applications.VGG16(weights='imagenet', include_top=True)
 feat_extractor = Model(inputs=model.input, outputs=model.get_layer("fc2").output)
 feat_extractor.summary()
-
+import numpy as np
+yyy = np.zeros((224, 224, 3)).reshape(-1, 224, 224, 3)
+feat_extractor.predict(yyy)
 
 from app import routes
