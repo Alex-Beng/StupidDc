@@ -7,6 +7,7 @@ import os
 import random
 import cv2
 from scipy.spatial import distance
+from copy import deepcopy
 
 import sys
 sys.path.append("../")
@@ -23,9 +24,11 @@ def get_local_img_features():
     for img_name in imgs:
         full_path = os.path.join(app.config['UPLOADED_PHOTOS_DEST'], img_name)
         img = cv2.imread(full_path)
+        print("ya：", full_path)
+        print(img.shape)
         img = cv2.resize(img, (224, 224))
 
-        feature = feat_extractor.feat_extractor.predict(img.reshape(-1, 224, 224, 3))[0]
+        feature = feat_extractor.predict(img.reshape(-1, 224, 224, 3))[0]
         fets.append(feature)
     
     e_t = time.time()
@@ -47,20 +50,37 @@ def selecting(full_name):
     serial_config['port'] = app.config['SERIAL_SERVER_PORT']
     while True:
         img = dnn_server_udp_once(dnn_config)
+
+        img = cv2.resize(img, (640, 480))
+        img_forshow = deepcopy(img)
+        # cv2.imshow("debug", img)
+
         img = cv2.resize(img, (224, 224))
         
         # feature shape is (4096, )
-        feature = feat_extractor.feat_extractor.predict(img.reshape(-1, 224, 224, 3))[0]
+        feature = feat_extractor.predict(img.reshape(-1, 224, 224, 3))[0]
+
+        
+        
 
         cos_dists = [ distance.cosine(feature, l_f) for l_f in local_features]
         cloest_idx = min(range(len(cos_dists)), key = lambda k: cos_dists[k])
         if cos_dists[cloest_idx] < app.config['DNN_THRESHOLD']:
+            cv2.putText(img_forshow, 'GET THE IMG!', 
+                    (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0))
+            cv2.imshow("debug", img_forshow)
+            cv2.waitKey()
+
             sendonce(serial_config)
+            cv2.destroyAllWindows()
             return
-    #     cv2.imshow("ya", img)
-    #     key = cv2.waitKey(1)
-    #     if key == ord('q'):
-    #         break
+        cv2.putText(img_forshow, 'Nops...', 
+                    (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255))
+        cv2.imshow("debug", img_forshow)
+        cv2.waitKey(1)
+        # cv2.imshow("ya", img)
+        # key = cv2.waitKey(1)
+
     # cv2.destroyAllWindows()
 
 
